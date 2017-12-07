@@ -2,6 +2,8 @@ import System.Environment
 import Text.Regex.Posix
 import Data.List
 
+nubForkAddrs = True
+
 fileWithoutInit :: [String] -> [String]
 fileWithoutInit = dropWhile (/= "0 [State 0] Created initial state")
 
@@ -26,6 +28,11 @@ stateSplit f = getAllTextMatches $ f =~ "[0-9] \\[State [0-9]+\\] .*" :: [String
 toCSV :: String -> String
 toCSV s = getState s "" ++ ", " ++ (intercalate ", " (getAddresses s))
 
+-- Disregards state info, only giving the addresses and pagedirs
+-- Horrible hack, to replace
+createNubbedCSV :: [String] -> String
+createNubbedCSV s = intercalate "\n" $ (nubBy (\a b -> (getAddresses a)!!0 == (getAddresses b)!!0)) s
+
 createCSVFile :: [String] -> String
 createCSVFile = intercalate "\n"
 
@@ -34,5 +41,5 @@ main = do
   let path = args!!0
   file <- readFile path
   let splitFile = stateSplit file
-  let forksOnly = createCSVFile $ map toCSV $ (filterForks) splitFile
-  writeFile (args!!1) forksOnly 
+  let forksOnly = createNubbedCSV $ map toCSV $ (filterForks) splitFile
+  writeFile (args!!1) forksOnly
