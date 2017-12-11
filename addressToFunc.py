@@ -7,7 +7,6 @@ def parseforks (path):
     for addr in addrs:
         print(addr)
         gdb.execute('info symbol ' + addr)
-    pass
 
 def getForkAddr(s):
     l = s.split(',')

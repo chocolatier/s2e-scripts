@@ -1,9 +1,19 @@
 import System.Environment
-import Text.Regex.Posix
+import Text.Regex.PCRE
 import Data.List
+import Data.Tree
+import qualified Data.Map.Strict as M
 
-nubForkAddrs = True
+data State = State {number :: Int,
+                    constraints :: String,
+                    pluginOutput :: [String]}
 
+data STree = Tree State
+
+--Used to organise the debug log into statewise chunks
+type SMap = M.Map String [String]
+
+-- Drops the initialisation sequence
 fileWithoutInit :: [String] -> [String]
 fileWithoutInit = dropWhile (/= "0 [State 0] Created initial state")
 
@@ -25,16 +35,25 @@ getAddresses l = getAllTextMatches $ l =~ "0x[a-f0-9]+" :: [String]
 stateSplit :: String -> [String]
 stateSplit f = getAllTextMatches $ f =~ "[0-9] \\[State [0-9]+\\] .*" :: [String]
 
+-- Groups the states. TODO: Modify to cover lines with no embedded state info.
+groupStates :: [String] -> SMap -> SMap
+groupStates [] m = m
+groupStates (x:xs) m = groupStates xs $ M.insertWith (flip (++)) (getState x "") [x] m
+
+-- Converts to comma separated values
 toCSV :: String -> String
 toCSV s = getState s "" ++ ", " ++ (intercalate ", " (getAddresses s))
 
--- Disregards state info, only giving the addresses and pagedirs
 -- Horrible hack, to replace
 createNubbedCSV :: [String] -> String
 createNubbedCSV s = intercalate "\n" $ (nubBy (\a b -> (getAddresses a)!!0 == (getAddresses b)!!0)) s
 
 createCSVFile :: [String] -> String
 createCSVFile = intercalate "\n"
+
+-- Counts the number of forks at a particular address.
+-- getForkCount :: [String] -> String
+
 
 main = do
   args <- getArgs
