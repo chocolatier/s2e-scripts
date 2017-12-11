@@ -8,10 +8,14 @@ data State = State {number :: Int,
                     constraints :: String,
                     pluginOutput :: [String]}
 
-data STree = Tree State
+type STree = Tree State
 
---Used to organise the debug log into statewise chunks
+-- Used to organise the debug log into statewise chunks
 type SMap = M.Map String [String]
+
+-- Stores the fork counts at at an address. TODO: Think of a name that does not
+-- read the same as fmap
+type FMap = M.Map String Int
 
 -- Drops the initialisation sequence
 fileWithoutInit :: [String] -> [String]
@@ -52,13 +56,14 @@ createCSVFile :: [String] -> String
 createCSVFile = intercalate "\n"
 
 -- Counts the number of forks at a particular address.
--- getForkCount :: [String] -> String
-
+getForkCount :: [String] -> FMap -> FMap
+getForkCount [] m = m
+getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1 m
 
 main = do
   args <- getArgs
   let path = args!!0
   file <- readFile path
   let splitFile = stateSplit file
-  let forksOnly = createNubbedCSV $ map toCSV $ (filterForks) splitFile
+  let forksOnly = show $ getForkCount (map toCSV $ (filterForks) splitFile) M.empty
   writeFile (args!!1) forksOnly
