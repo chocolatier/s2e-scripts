@@ -2,6 +2,7 @@ import System.Environment
 import Text.Regex.PCRE
 import Data.List
 import Data.Tree
+import Data.Maybe
 import qualified Data.Map.Strict as M
 
 data State = State {number :: Int,
@@ -30,6 +31,10 @@ getState line prevState = if ((line =~ "(\\[State [0-9]+\\])"))
 -- Filters lines where the forks occour
 filterForks :: [String] -> [String]
 filterForks = filter $ isInfixOf "Forking state"
+
+-- Filters lines where the forks occour
+filterCalls :: [String] -> [String]
+filterCalls = filter $ isInfixOf "Called from address"
 
 -- Grabs hexval addresses from a string
 getAddresses :: String -> [String]
@@ -65,5 +70,6 @@ main = do
   let path = args!!0
   file <- readFile path
   let splitFile = stateSplit file
-  let forksOnly = show $ getForkCount (map toCSV $ (filterForks) splitFile) M.empty
-  writeFile (args!!1) forksOnly
+  let forksOnly = createNubbedCSV (map toCSV $ filterForks splitFile)
+  let states = groupStates splitFile M.empty
+  writeFile (args!!1) (intercalate "\n" $ map (intercalate "\n") $ map (\(k,v) -> v) $ M.toDescList states) --WTF
