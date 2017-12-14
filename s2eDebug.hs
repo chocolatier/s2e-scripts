@@ -49,7 +49,7 @@ getAddresses l = getAllTextMatches $ l =~ "0x[a-f0-9]+" :: [String]
 
 -- Pattern for matching state chunks
 stateSplit :: String -> [String]
-stateSplit f = getAllTextMatches $ f =~ "[0-9] \\[State [0-9]+\\] .*" :: [String]
+stateSplit f = getAllTextMatches $ f =~ "[0-9]+ \\[State [0-9]+\\] .*" :: [String]
 
 -- Groups the states. TODO: Modify to cover lines with no embedded state info.
 groupStates :: [String] -> SMap -> SMap
@@ -79,4 +79,4 @@ main = do
   let splitFile = stateSplit file
   let forksOnly = createNubbedCSV (map toCSV $ filterForks splitFile)
   let states = groupStates splitFile M.empty
-  writeFile (args!!1) (intercalate "\n" $ findTestCases splitFile) 
+  writeFile (args!!1) (intercalate "\n" $ findTestCases splitFile)
