@@ -14,9 +14,8 @@ type STree = Tree State
 -- Used to organise the debug log into statewise chunks
 type SMap = M.Map String [String]
 
--- Stores the fork counts at at an address. TODO: Think of a name that does not
--- read the same as fmap
-type FMap = M.Map String Int
+-- Stores the fork counts at at an address
+type FCMap = M.Map String Int
 
 -- Drops the initialisation sequence
 fileWithoutInit :: [String] -> [String]
@@ -35,6 +34,14 @@ filterForks = filter $ isInfixOf "Forking state"
 -- Filters lines where the forks occour
 filterCalls :: [String] -> [String]
 filterCalls = filter $ isInfixOf "Called from address"
+
+-- Filters lines where the dead ends are inserted
+filterDeadEndInsertions :: [String] -> [String]
+filterDeadEndInsertions = filter $ isInfixOf "Inserting dead end at"
+
+-- Filters lines where the dead ends are inserted
+findTestCases :: [String] -> [String]
+findTestCases = filter $ isInfixOf "(string)"
 
 -- Grabs hexval addresses from a string
 getAddresses :: String -> [String]
@@ -61,7 +68,7 @@ createCSVFile :: [String] -> String
 createCSVFile = intercalate "\n"
 
 -- Counts the number of forks at a particular address.
-getForkCount :: [String] -> FMap -> FMap
+getForkCount :: [String] -> FCMap -> FCMap
 getForkCount [] m = m
 getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1 m
 
@@ -72,4 +79,4 @@ main = do
   let splitFile = stateSplit file
   let forksOnly = createNubbedCSV (map toCSV $ filterForks splitFile)
   let states = groupStates splitFile M.empty
-  writeFile (args!!1) (intercalate "\n" $ map (intercalate "\n") $ map (\(k,v) -> v) $ M.toDescList states) --WTF
+  writeFile (args!!1) (intercalate "\n" $ findTestCases splitFile) 
