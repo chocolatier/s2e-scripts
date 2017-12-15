@@ -98,6 +98,7 @@ getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1
 parseCommand :: [String] -> Sections -> String -> String
 parseCommand debugFile binary x = case x of
   "getForks" -> getForks debugFile binary
+  "findTestCases" -> intercalate "\n" $ findTestCases debugFile
   _ -> "Undefined Command. Check parseCommand in s2eDebug.hs for available options"
 
 getForks :: [String] -> Sections -> String
