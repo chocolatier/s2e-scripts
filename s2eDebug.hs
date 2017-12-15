@@ -13,6 +13,18 @@ import qualified Data.ByteString as BS
 import DWARF.Basics
 import DWARF.Addr2Line
 
+data State = State {number :: Int,
+                    constraints :: String,
+                    pluginOutput :: [String]}
+
+type STree = Tree State
+
+-- Used to organise the debug log into statewise chunks
+type SMap = M.Map String [String]
+
+-- Stores the fork counts at at an address
+type FCMap = M.Map String Int
+
 -- Copied from the Test.hs file in dwarf-tools
 fromElf :: ByteString -> Sections
 fromElf bs = sections end
@@ -25,18 +37,6 @@ fromElf bs = sections end
   end  = case elfData elf of
            ELFDATA2LSB -> LittleEndian
            ELFDATA2MSB -> BigEndian
-
-data State = State {number :: Int,
-                    constraints :: String,
-                    pluginOutput :: [String]}
-
-type STree = Tree State
-
--- Used to organise the debug log into statewise chunks
-type SMap = M.Map String [String]
-
--- Stores the fork counts at at an address
-type FCMap = M.Map String Int
 
 -- Drops the initialisation sequence
 fileWithoutInit :: [String] -> [String]
@@ -104,10 +104,13 @@ getForks :: [String] -> Sections -> String
 getForks debugFile binary = intercalate "\n" $ map (getFork binary) (filterForks debugFile)
 
 getFork :: Sections -> String -> String
-getFork binary line = show inf
+getFork binary l = (getState l "") ++ ": Fork at " ++ addr ++ " in line "
+  ++ lin ++ " in function " ++ fcn
   where
-    addr = read $ (getAddresses line)!!0
-    inf = addr2line binary addr
+    addr = (getAddresses l)!!0
+    inf = addr2line binary (read addr)
+    fcn = show $ fromJust $ function inf
+    lin = show $ fromJust $ line inf
 
 -- Stolen from https://stackoverflow.com/questions/16799755/haskell-interact-function
 eachLine :: (String -> String) -> (String -> String)
