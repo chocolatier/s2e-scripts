@@ -99,7 +99,20 @@ parseCommand :: [String] -> Sections -> String -> String
 parseCommand debugFile binary x = case x of
   "getForks" -> getForks debugFile binary
   "findTestCases" -> intercalate "\n" $ findTestCases debugFile
+  "getDeadEnds" -> getDeadEnds debugFile binary
   _ -> "Undefined Command. Check parseCommand in s2eDebug.hs for available options"
+
+getDeadEnds :: [String] -> Sections -> String
+getDeadEnds debugFile binary = intercalate "\n" $ map (getDeadEnd binary) (filterDeadEndInsertions debugFile)
+
+getDeadEnd :: Sections -> String -> String
+getDeadEnd binary l = (getState l "") ++ ": Dead End " ++ addr ++ " in line "
+  ++ lin ++ " in function " ++ fcn
+  where
+    addr = (getAddresses l)!!0
+    inf = addr2line binary (read addr)
+    fcn = show $ fromJust $ function inf
+    lin = show $ fromJust $ line inf
 
 getForks :: [String] -> Sections -> String
 getForks debugFile binary = intercalate "\n" $ map (getFork binary) (filterForks debugFile)
