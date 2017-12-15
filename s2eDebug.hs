@@ -95,12 +95,27 @@ getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1
 
 -- Parses commands. Takes the debug file split into lines, and the binary
 -- in the Sections format specified by dwarf-tools
+-- TODO: Move the links to a map somewhere and lookup maybe?
 parseCommand :: [String] -> Sections -> String -> String
 parseCommand debugFile binary x = case x of
   "getForks" -> getForks debugFile binary
   "findTestCases" -> intercalate "\n" $ findTestCases debugFile
   "getDeadEnds" -> getDeadEnds debugFile binary
+  "countForks" -> countForks debugFile binary
   _ -> "Undefined Command. Check parseCommand in s2eDebug.hs for available options"
+
+countForks :: [String] -> Sections -> String
+countForks debugFile binary = M.foldlWithKey (ppFork binary) "" forkMap
+  where
+    forkMap = getForkCount (filterForks $ debugFile) M.empty
+
+ppFork :: Sections -> String -> String -> Int -> String
+ppFork binary prev addr count = prev ++ "\n" ++ addr ++ ": In " ++ fcn ++
+  " at line " ++ lin ++ ": " ++ show count
+  where
+    inf = addr2line binary (read addr)
+    fcn = show $ fromJust $ function inf
+    lin = show $ fromJust $ line inf
 
 getDeadEnds :: [String] -> Sections -> String
 getDeadEnds debugFile binary = intercalate "\n" $ map (getDeadEnd binary) (filterDeadEndInsertions debugFile)
