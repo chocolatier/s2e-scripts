@@ -52,7 +52,7 @@ getState line prevState = if ((line =~ "(\\[State [0-9]+\\])"))
 filterForks :: [String] -> [String]
 filterForks = filter $ isInfixOf "Forking state"
 
--- Filters lines where the forks occour
+-- Filters lines where the function calls occour
 filterCalls :: [String] -> [String]
 filterCalls = filter $ isInfixOf "Called from address"
 
