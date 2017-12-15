@@ -3,7 +3,28 @@ import Text.Regex.PCRE
 import Data.List
 import Data.Tree
 import Data.Maybe
+import System.FilePath.Posix
+import Data.Elf
 import qualified Data.Map.Strict as M
+
+import Data.ByteString (ByteString)
+import qualified Data.ByteString as BS
+
+import DWARF.Basics
+import DWARF.Addr2Line
+
+-- Copied from the Test.hs file in dwarf-tools
+fromElf :: ByteString -> Sections
+fromElf bs = sections end
+           $ M.fromList [ (name, elfSectionData s)
+                          | s <- elfSections elf
+                          , let name = elfSectionName s
+                          , ".debug_" `isPrefixOf` name ]
+  where
+  elf  = parseElf bs
+  end  = case elfData elf of
+           ELFDATA2LSB -> LittleEndian
+           ELFDATA2MSB -> BigEndian
 
 data State = State {number :: Int,
                     constraints :: String,
@@ -72,11 +93,29 @@ getForkCount :: [String] -> FCMap -> FCMap
 getForkCount [] m = m
 getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1 m
 
+-- Parses commands. Takes the debug file split into lines, and the binary
+-- in the Sections format specified by dwarf-tools
+parseCommand :: [String] -> Sections -> String -> String
+parseCommand debugFile binary x = case x of
+  "getForks" -> getForks debugFile
+
+getForks :: [String] -> String
+getForks debugFile = createNubbedCSV $ filterForks debugFile
+
+-- Stolen from https://stackoverflow.com/questions/16799755/haskell-interact-function
+eachLine :: (String -> String) -> (String -> String)
+eachLine f = unlines . map f . lines
+
+-- Open interactive debug parser
+-- Usage ./s2eDebug /path/to/s2e/project/ s2e-out-x/
+-- Defaults to s2e-last if no output directory is specified.
+-- Assumes that the project directory name is name of binary
+main :: IO ()
 main = do
   args <- getArgs
-  let path = args!!0
-  file <- readFile path
-  let splitFile = stateSplit file
-  let forksOnly = createNubbedCSV (map toCSV $ filterForks splitFile)
-  let states = groupStates splitFile M.empty
-  writeFile (args!!1) (intercalate "\n" $ findTestCases splitFile)
+  let projectDir = (args!!0)
+      outDir = if length args == 1 then "s2e-last" else (args!!1)
+      file = projectDir </> ((last . splitDirectories) projectDir)
+  debugFile <- readFile $ projectDir </> outDir </> "debug.txt"
+  binary <- fromElf <$> BS.readFile file
+  interact $ eachLine $ parseCommand (stateSplit debugFile) binary
