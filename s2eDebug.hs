@@ -97,10 +97,17 @@ getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1
 -- in the Sections format specified by dwarf-tools
 parseCommand :: [String] -> Sections -> String -> String
 parseCommand debugFile binary x = case x of
-  "getForks" -> getForks debugFile
+  "getForks" -> getForks debugFile binary
+  _ -> "Undefined Command. Check parseCommand in s2eDebug.hs for available options"
 
-getForks :: [String] -> String
-getForks debugFile = createNubbedCSV $ filterForks debugFile
+getForks :: [String] -> Sections -> String
+getForks debugFile binary = intercalate "\n" $ map (getFork binary) (filterForks debugFile)
+
+getFork :: Sections -> String -> String
+getFork binary line = show inf
+  where
+    addr = read $ (getAddresses line)!!0
+    inf = addr2line binary addr
 
 -- Stolen from https://stackoverflow.com/questions/16799755/haskell-interact-function
 eachLine :: (String -> String) -> (String -> String)
