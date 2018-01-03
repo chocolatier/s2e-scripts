@@ -96,6 +96,10 @@ getForkCount :: [String] -> FCMap -> FCMap
 getForkCount [] m = m
 getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1 m
 
+getStatusCount :: [String] ->  FCMap -> FCMap
+getStatusCount [] m = m
+getStatusCount (x:xs) m = getStatusCount xs $ M.insertWith (+) x 1 m
+
 -- Parses commands. Takes the debug file split into lines, and the binary
 -- in the Sections format specified by dwarf-tools
 -- TODO: Move the links to a map somewhere and lookup maybe?
@@ -106,7 +110,14 @@ parseCommand debugFile binary x = case x of
   "getDeadEnds" -> getDeadEnds (stateSplit debugFile) binary
   "countForks" -> countForks (stateSplit debugFile) binary
   "getStatus" -> intercalate "\n" $ getStatus (lines debugFile)
+  "countStatus" -> countStatus $ getStatus $ lines debugFile
   _ -> "Undefined Command. Check parseCommand in s2eDebug.hs for available options"
+
+countStatus :: [String] -> String
+countStatus debugFile = M.foldlWithKey ppStatus "" $ getStatusCount debugFile M.empty
+
+ppStatus :: String -> String -> Int -> String
+ppStatus prev curr count = prev ++ "\n" ++ (dropWhile (== ' ') curr) ++ ": " ++ show count
 
 countForks :: [String] -> Sections -> String
 countForks debugFile binary = M.foldlWithKey (ppFork binary) "" forkMap
