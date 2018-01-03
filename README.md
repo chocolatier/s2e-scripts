@@ -25,3 +25,4 @@ echo -e "command" | ./s2eDebug /path/to/s2e/project/ s2e-out-x > foo.txt
 * countForks : Counts the number of forks at a paricular location
 * findTestCases : Finds all the test cases s2e generated
 * getDeadEnds : Find all the dead ends the DynamicEarlyTerminate plugin inserted
+* getStatus : Finds all the status codes a program exited with. (Doesn't catch the related states or any other information)
