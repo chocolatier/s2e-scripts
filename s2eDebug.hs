@@ -88,6 +88,9 @@ createNubbedCSV s = intercalate "\n" $ (nubBy (\a b -> (getAddresses a)!!0 == (g
 createCSVFile :: [String] -> String
 createCSVFile = intercalate "\n"
 
+getStatus :: [String] -> [String]
+getStatus = filter $ isInfixOf "status"
+
 -- Counts the number of forks at a particular address.
 getForkCount :: [String] -> FCMap -> FCMap
 getForkCount [] m = m
@@ -96,12 +99,13 @@ getForkCount (x:xs) m = getForkCount xs $ M.insertWith (+) (getAddresses x!!0) 1
 -- Parses commands. Takes the debug file split into lines, and the binary
 -- in the Sections format specified by dwarf-tools
 -- TODO: Move the links to a map somewhere and lookup maybe?
-parseCommand :: [String] -> Sections -> String -> String
+parseCommand :: String -> Sections -> String -> String
 parseCommand debugFile binary x = case x of
-  "getForks" -> getForks debugFile binary
-  "findTestCases" -> intercalate "\n" $ findTestCases debugFile
-  "getDeadEnds" -> getDeadEnds debugFile binary
-  "countForks" -> countForks debugFile binary
+  "getForks" -> getForks (stateSplit debugFile) binary
+  "findTestCases" -> intercalate "\n" $ findTestCases (stateSplit debugFile)
+  "getDeadEnds" -> getDeadEnds (stateSplit debugFile) binary
+  "countForks" -> countForks (stateSplit debugFile) binary
+  "getStatus" -> intercalate "\n" $ getStatus (lines debugFile)
   _ -> "Undefined Command. Check parseCommand in s2eDebug.hs for available options"
 
 countForks :: [String] -> Sections -> String
@@ -157,4 +161,4 @@ main = do
       file = projectDir </> ((last . splitDirectories) projectDir)
   debugFile <- readFile $ projectDir </> outDir </> "debug.txt"
   binary <- fromElf <$> BS.readFile file
-  interact $ eachLine $ parseCommand (stateSplit debugFile) binary
+  interact $ eachLine $ parseCommand debugFile binary
