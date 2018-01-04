@@ -100,6 +100,17 @@ getStatusCount :: [String] ->  FCMap -> FCMap
 getStatusCount [] m = m
 getStatusCount (x:xs) m = getStatusCount xs $ M.insertWith (+) x 1 m
 
+getStatus2 :: [String] -> [String]
+getStatus2 = filter $ isInfixOf "with exit code"
+
+getStatusCount2 :: [String] -> FCMap -> FCMap
+getStatusCount2 [] m = m
+getStatusCount2 (x:xs) m = getStatusCount2 xs $ M.insertWith (+) (findExitCode x) 1 m
+
+-- Eww
+findExitCode :: String -> String
+findExitCode x = init $ last $ words x
+
 -- Parses commands. Takes the debug file split into lines, and the binary
 -- in the Sections format specified by dwarf-tools
 -- TODO: Move the links to a map somewhere and lookup maybe?
@@ -111,7 +122,11 @@ parseCommand debugFile binary x = case x of
   "countForks" -> countForks (stateSplit debugFile) binary
   "getStatus" -> intercalate "\n" $ getStatus (lines debugFile)
   "countStatus" -> countStatus $ getStatus $ lines debugFile
+  "countStatus2" -> countStatus2 $ getStatus2 $ lines debugFile
   _ -> "Undefined Command. Check parseCommand in s2eDebug.hs for available options"
+
+countStatus2 :: [String] -> String
+countStatus2 debugFile = M.foldlWithKey ppStatus "" $ getStatusCount2 debugFile M.empty
 
 countStatus :: [String] -> String
 countStatus debugFile = M.foldlWithKey ppStatus "" $ getStatusCount debugFile M.empty
