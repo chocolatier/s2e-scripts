@@ -1,9 +1,9 @@
-(Eq 0x0
-     (And w32 (Add w32 0xffffffe0
-                       (ZExt w32 (Read w8 0x2 v0___symfile____tmp_input___0_1_symfile___0)))
-              0xff))
-(Sle (SExt w32 (Read w8 0x2 v0___symfile____tmp_input___0_1_symfile___0))
-      0x2f)
+(Eq false
+     (Slt 0x39
+          (SExt w32 (Read w8 0x2 v0___symfile____tmp_input___0_1_symfile___0))))
+(Eq false
+     (Sle (SExt w32 (Read w8 0x2 v0___symfile____tmp_input___0_1_symfile___0))
+          0x2f))
 (Eq false
      (Slt 0x39
           (SExt w32 (Read w8 0x1 v0___symfile____tmp_input___0_1_symfile___0))))
