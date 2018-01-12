@@ -6,18 +6,13 @@ import Data.Maybe
 import System.FilePath.Posix
 import Data.Elf
 import qualified Data.Map.Strict as M
+import System.Console.GetOpt
 
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as BS
 
 import DWARF.Basics
 import DWARF.Addr2Line
-
-data State = State {number :: Int,
-                    constraints :: String,
-                    pluginOutput :: [String]}
-
-type STree = Tree State
 
 -- Used to organise the debug log into statewise chunks
 type SMap = M.Map String [String]
