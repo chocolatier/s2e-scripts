@@ -6,7 +6,6 @@ import Data.Maybe
 import System.FilePath.Posix
 import Data.Elf
 import qualified Data.Map.Strict as M
-import System.Console.GetOpt
 
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as BS
@@ -166,20 +165,26 @@ getFork binary l = (getState l "") ++ ": Fork at " ++ addr ++ " in line "
     fcn = show $ fromJust $ function inf
     lin = show $ fromJust $ line inf
 
--- Stolen from https://stackoverflow.com/questions/16799755/haskell-interact-function
-eachLine :: (String -> String) -> (String -> String)
-eachLine f = unlines . map f . lines
+getOptional :: String -> [String] -> (String -> a) -> a -> a
+getOptional option args fcn default_ =
+    let index = option `elemIndex` args in
+    if index == Nothing then
+        default_
+    else
+       fcn (args!!(fromJust index+1))
 
--- Open interactive debug parser
--- Usage ./s2eDebug /path/to/s2e/project/ s2e-out-x/
--- Defaults to s2e-last if no output directory is specified.
+-- Usage ./s2eDebug /path/to/s2e/project/ command -d s2e-out-x/ -o outfile.txt
+-- Defaults to s2e-last if no debug output directory is specified.
+-- Writes to standard output if no outfile is specified.
 -- Assumes that the project directory name is name of binary
 main :: IO ()
 main = do
   args <- getArgs
   let projectDir = (args!!0)
-      outDir = if length args == 1 then "s2e-last" else (args!!1)
+      command = (args!!1)
+      outDir = getOptional "-d" args id "s2e-last"
       file = projectDir </> ((last . splitDirectories) projectDir)
+      writer = getOptional "-o" args writeFile putStrLn
   debugFile <- readFile $ projectDir </> outDir </> "debug.txt"
   binary <- fromElf <$> BS.readFile file
-  interact $ eachLine $ parseCommand debugFile binary
+  writer $ parseCommand debugFile binary command
