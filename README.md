@@ -8,19 +8,13 @@ dwarf-tools
 ## Usage
 
 ```
-./s2eDebug /path/to/s2e/project/ s2e-out-x
+./s2eDebug /path/to/s2e/project/ s2e-out-x -d s2eOutputDirectory -o outputFile
 ```
-Defaults to s2e-last if no output directory is specified.
+Defaults to s2e-last if no s2e output directory is specified.
+Writes to stdout if no output file is specified
 
 Assumes that the project directory name is name of binary
 
-Exit with C-c or C-d (EOF)
-
-### Realistic Usage
-
-```
-echo -e "command" | ./s2eDebug /path/to/s2e/project/ s2e-out-x > foo.txt
-```
 ### Defined commands
 
 * getForks : Finds all the locations s2e forked at
