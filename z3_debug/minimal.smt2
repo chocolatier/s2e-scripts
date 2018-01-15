@@ -5,13 +5,9 @@
 (declare-const ?v (_ BitVec 8))
 
 (assert 
-	(let 
-		(
-		(?B1 (select sym_file (_ bv2 32))) 
-		(?B2 (select sym_file (_ bv0 32)))
-		)
-	) 
-	(bvsle ?B1 ?v)
+(let 
+((?B1 (select sym_file (_ bv2 32))) (?B2 (select sym_file (_ bv0 32))))) 
+(= false (bvsle ?B1 ?v))
 )
 
 (check-sat)
