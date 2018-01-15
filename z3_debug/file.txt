@@ -1,0 +1,162 @@
+(goals
+(goal
+  (let ((a!1 (bvnot (bvadd #xffffffd7
+                           (concat #x000000
+                                   (select v0___symfile____tmp_input___0_1_symfile___0
+                                           #x00000002))))))
+    (= (bvnot (bvor a!1 (bvnot #x000000ff))) #x00000000))
+  (bvsle (concat ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000001))
+                 (select v0___symfile____tmp_input___0_1_symfile___0 #x00000001))
+         #x00000039)
+  (not (bvsle ((_ sign_extend 24)
+                (select v0___symfile____tmp_input___0_1_symfile___0 #x00000001))
+              #x0000002f))
+  (bvsle (concat ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 ((_ extract 7 7)
+                   (select v0___symfile____tmp_input___0_1_symfile___0
+                           #x00000000))
+                 (select v0___symfile____tmp_input___0_1_symfile___0 #x00000000))
+         #x00000039)
+  (not (bvsle ((_ sign_extend 24)
+                (select v0___symfile____tmp_input___0_1_symfile___0 #x00000000))
+              #x0000002f)))
+)
