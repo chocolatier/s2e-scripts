@@ -54,7 +54,7 @@ filterCalls = filter $ isInfixOf "Called from address"
 filterDeadEndInsertions :: [String] -> [String]
 filterDeadEndInsertions = filter $ isInfixOf "Inserting dead end at"
 
--- Filters lines where the dead ends are inserted
+-- Finds the lines where the test cases are
 findTestCases :: [String] -> [String]
 findTestCases = filter $ isInfixOf "(string)"
 
